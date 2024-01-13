@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - people_api_poc
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+  bastion:
+    build:
+      context: .
+      dockerfile: Bastion.Dockerfile
+    networks:
+      - people_api_poc
+    stdin_open: true
+    tty: true
+  app:
+    build:
+      context: .
+      dockerfile: App.Dockerfile
+    ports:
+      - "8081:8081"
+    networks:
+      - people_api_poc
+    volumes:
+      - ./:/app
+    stdin_open: true
+    tty: true
+networks:
+  people_api_poc:
+    driver: bridge
